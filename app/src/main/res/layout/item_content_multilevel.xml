@@ -20,6 +20,12 @@
             android:layout_weight="1"
             android:text="Title" />
 
+        <Button
+            android:id="@+id/btn_teste"
+            android:text="Aperte"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
     </LinearLayout>
 
 </LinearLayout>

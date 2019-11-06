@@ -38,7 +38,15 @@ class MainActivity : AppCompatActivity() {
         val retorno = ArrayList<MultiLevelItem>()
 
         val item1 = MultiLevelItem("Item 1", ArrayList(), false)
-        item1.items?.add(MultiLevelItem("SubItem 1.1", ArrayList(), false))
+
+        val item11 = MultiLevelItem("SubItem 1.1", ArrayList(), false)
+
+        item11.items?.add(MultiLevelItem("SubItem 1.1.1", ArrayList(), false))
+        item11.items?.add(MultiLevelItem("SubItem 1.1.2", ArrayList(), false))
+        item11.items?.add(MultiLevelItem("SubItem 1.1.3", ArrayList(), false))
+        item11.items?.add(MultiLevelItem("SubItem 1.1.4", ArrayList(), false))
+
+        item1.items?.add(item11)
         item1.items?.add(MultiLevelItem("SubItem 1.2", ArrayList(), false))
         item1.items?.add(MultiLevelItem("SubItem 1.1", ArrayList(), false))
         item1.items?.add(MultiLevelItem("SubItem 1.2", ArrayList(), true))

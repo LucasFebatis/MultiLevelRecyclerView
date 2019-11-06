@@ -7,7 +7,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import android.view.ViewStub
 
-class MainAdapter(private var myDataset: List<MultiLevelItem>, var contentItemAdapter: RecyclerView.Adapter<MyViewHolder>) :
+class MainAdapter(private var myDataset: List<MultiLevelItem>, var contentItemAdapter: RecyclerView.Adapter<ContentItemAdapter.ContentItemViewHolder>) :
     RecyclerView.Adapter<MainAdapter.MyViewHolder>() {
 
     private lateinit var recyclerView: RecyclerView
@@ -165,7 +165,7 @@ class MainAdapter(private var myDataset: List<MultiLevelItem>, var contentItemAd
 
         } else {
             // Has Content
-            contentItemAdapter.onBindViewHolder(holder, position)
+            contentItemAdapter.onBindViewHolder(holder as ContentItemAdapter.ContentItemViewHolder, position)
         }
 
     }
