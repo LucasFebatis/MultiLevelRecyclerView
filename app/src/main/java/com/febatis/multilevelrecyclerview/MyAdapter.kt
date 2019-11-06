@@ -1,30 +1,28 @@
 package com.febatis.multilevelrecyclerview
 
 import android.animation.ValueAnimator
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import android.view.ViewTreeObserver
+import android.view.*
 import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import android.view.ViewStub
 
-
-class MyAdapter(private var myDataset: List<MultiLevelItem>) :
+class MyAdapter(private var myDataset: List<MultiLevelItem>, var contentItemAdapter: RecyclerView.Adapter<MyViewHolder>) :
     RecyclerView.Adapter<MyAdapter.MyViewHolder>() {
 
     private lateinit var recyclerView: RecyclerView
     private lateinit var viewAdapter: RecyclerView.Adapter<*>
     private lateinit var viewManager: RecyclerView.LayoutManager
 
-    class MyViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+    open class MyViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
-        var ivExpandIcon: View = view.findViewById(R.id.iv_expand_icon)
-        var llHeader: View = view.findViewById(R.id.ll_header)
-        var tvTitle: TextView = view.findViewById(R.id.tv_title)
-        var llItems: View = view.findViewById(R.id.ll_items)
-        var rvItems: RecyclerView = view.findViewById(R.id.rv_items)
-        var llContent: View = view.findViewById(R.id.ll_content)
+        var ivExpandIcon: View? = view.findViewById(R.id.iv_expand_icon)
+        var llHeader: View? = view.findViewById(R.id.ll_header)
+        var tvTitle: TextView? = view.findViewById(R.id.tv_title)
+        var llItems: View? = view.findViewById(R.id.ll_items)
+        var rvItems: RecyclerView? = view.findViewById(R.id.rv_items)
+        var llContent: View? = view.findViewById(R.id.ll_content)
+        var vsContent: ViewStub? = view.findViewById(R.id.vs_content)
         var isOpen = true
         var itemMeasuredHeight = 0
         lateinit var listener: ViewTreeObserver.OnGlobalLayoutListener
@@ -38,9 +36,9 @@ class MyAdapter(private var myDataset: List<MultiLevelItem>) :
         val anim = ValueAnimator.ofInt(0, holder.itemMeasuredHeight)
         anim.addUpdateListener { valueAnimator ->
             val `val` = valueAnimator.animatedValue as Int
-            val layoutParams = holder.llItems.layoutParams
+            val layoutParams = holder.llItems!!.layoutParams
             layoutParams.height = `val`
-            holder.llItems.layoutParams = layoutParams
+            holder.llItems!!.layoutParams = layoutParams
         }
 
         anim.duration = 300
@@ -52,9 +50,9 @@ class MyAdapter(private var myDataset: List<MultiLevelItem>) :
         val anim = ValueAnimator.ofInt(holder.itemMeasuredHeight, 0)
         anim.addUpdateListener { valueAnimator ->
             val `val` = valueAnimator.animatedValue as Int
-            val layoutParams = holder.llItems.layoutParams
+            val layoutParams = holder.llItems!!.layoutParams
             layoutParams.height = `val`
-            holder.llItems.layoutParams = layoutParams
+            holder.llItems!!.layoutParams = layoutParams
         }
         anim.duration = 300
         anim.start()
@@ -63,10 +61,10 @@ class MyAdapter(private var myDataset: List<MultiLevelItem>) :
     private fun toggleContents(holder: MyViewHolder) {
 
         if (holder.itemMeasuredHeight == 0 ) {
-            holder.itemMeasuredHeight = holder.llItems.measuredHeight
+            holder.itemMeasuredHeight = holder.llItems!!.measuredHeight
         }
 
-        holder.ivExpandIcon.animate()
+        holder.ivExpandIcon!!.animate()
             .rotation((if (holder.isOpen) -180 else 0).toFloat())
             .start()
 
@@ -82,7 +80,7 @@ class MyAdapter(private var myDataset: List<MultiLevelItem>) :
     private fun setupRv(holder: MyViewHolder, i: Int) {
 
         viewManager = LinearLayoutManager(holder.itemView.context)
-        viewAdapter = MyAdapter(myDataset[i].items!!)
+        viewAdapter = MyAdapter(myDataset[i].items!!, contentItemAdapter)
 
         recyclerView = holder.itemView.findViewById<RecyclerView>(R.id.rv_items).apply {
             // use this setting to improve performance if you know that changes
@@ -100,16 +98,16 @@ class MyAdapter(private var myDataset: List<MultiLevelItem>) :
     }
 
     private fun setupGlobalLayoutListener(holder: MyViewHolder) {
-        val observer = holder.llItems.viewTreeObserver
+        val observer = holder.llItems!!.viewTreeObserver
         holder.listener = ViewTreeObserver.OnGlobalLayoutListener {
-            if (holder.llItems.measuredHeight != 0) {
-                holder.itemMeasuredHeight = holder.llItems.measuredHeight
+            if (holder.llItems!!.measuredHeight != 0) {
+                holder.itemMeasuredHeight = holder.llItems!!.measuredHeight
 
                 toggleContents(holder)
 
 
-                if (holder.llItems.viewTreeObserver.isAlive) {
-                    holder.llItems.viewTreeObserver.removeOnGlobalLayoutListener(holder.listener)
+                if (holder.llItems!!.viewTreeObserver.isAlive) {
+                    holder.llItems!!.viewTreeObserver.removeOnGlobalLayoutListener(holder.listener)
                 }
             }
         }
@@ -124,36 +122,50 @@ class MyAdapter(private var myDataset: List<MultiLevelItem>) :
         viewType: Int
     ): MyViewHolder {
 
-        val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.item_multilevel, parent, false)
+        return if (viewType == 2) {
 
-        val holder = MyViewHolder(view)
+            val view = LayoutInflater.from(parent.context)
+                .inflate(R.layout.item_multilevel, parent, false)
 
-        setupGlobalLayoutListener(holder)
+            val holder = MyViewHolder(view)
 
-        return holder
+            setupGlobalLayoutListener(holder)
+
+            holder
+        } else {
+            contentItemAdapter.onCreateViewHolder(parent, viewType)
+        }
+
+    }
+
+    override fun getItemViewType(position: Int): Int {
+        return if(myDataset[position].items!!.isEmpty()) {
+            1
+        } else {
+            2
+        }
     }
 
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
 
         // Header
-
-        holder.tvTitle.text = myDataset[position].title
-
-        // Has Items
+        holder.tvTitle!!.text = myDataset[position].title
 
         if(myDataset[position].items!!.isNotEmpty()) {
-
+            // Has Items
             holder.isOpen = !myDataset[position].isOpen
 
-            holder.ivExpandIcon.visibility = View.VISIBLE
+            holder.ivExpandIcon!!.visibility = View.VISIBLE
 
             setupRv(holder, position)
-            holder.llHeader.setOnClickListener {
+            holder.llHeader!!.setOnClickListener {
                 toggleContents(holder)
                 myDataset[position].isOpen = holder.isOpen
             }
 
+        } else {
+            // Has Content
+            contentItemAdapter.onBindViewHolder(holder, position)
         }
 
     }
