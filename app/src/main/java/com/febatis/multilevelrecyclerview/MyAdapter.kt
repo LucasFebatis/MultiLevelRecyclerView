@@ -136,8 +136,6 @@ class MyAdapter(private var myDataset: List<MultiLevelItem>) :
 
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
 
-        holder.isOpen = !myDataset[position].isOpen
-
         // Header
 
         holder.tvTitle.text = myDataset[position].title
@@ -145,6 +143,10 @@ class MyAdapter(private var myDataset: List<MultiLevelItem>) :
         // Has Items
 
         if(myDataset[position].items!!.isNotEmpty()) {
+
+            holder.isOpen = !myDataset[position].isOpen
+
+            holder.ivExpandIcon.visibility = View.VISIBLE
 
             setupRv(holder, position)
             holder.llHeader.setOnClickListener {
