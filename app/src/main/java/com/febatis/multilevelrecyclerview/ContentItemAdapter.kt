@@ -2,7 +2,7 @@ package com.febatis.multilevelrecyclerview
 
 import android.view.*
 import androidx.recyclerview.widget.RecyclerView
-import com.febatis.multilevelrecyclerview.MyAdapter.MyViewHolder
+import com.febatis.multilevelrecyclerview.MainAdapter.MyViewHolder
 
 
 class ContentItemAdapter:

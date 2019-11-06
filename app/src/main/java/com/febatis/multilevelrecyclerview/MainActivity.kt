@@ -18,7 +18,7 @@ class MainActivity : AppCompatActivity() {
         val myDataset = setupItems()
 
         viewManager = LinearLayoutManager(this)
-        viewAdapter = MyAdapter(myDataset, ContentItemAdapter())
+        viewAdapter = MainAdapter(myDataset, ContentItemAdapter())
 
         recyclerView = findViewById<RecyclerView>(R.id.rv_items).apply {
             // use this setting to improve performance if you know that changes

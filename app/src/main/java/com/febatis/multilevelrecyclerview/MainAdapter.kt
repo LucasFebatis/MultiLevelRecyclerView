@@ -7,8 +7,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import android.view.ViewStub
 
-class MyAdapter(private var myDataset: List<MultiLevelItem>, var contentItemAdapter: RecyclerView.Adapter<MyViewHolder>) :
-    RecyclerView.Adapter<MyAdapter.MyViewHolder>() {
+class MainAdapter(private var myDataset: List<MultiLevelItem>, var contentItemAdapter: RecyclerView.Adapter<MyViewHolder>) :
+    RecyclerView.Adapter<MainAdapter.MyViewHolder>() {
 
     private lateinit var recyclerView: RecyclerView
     private lateinit var viewAdapter: RecyclerView.Adapter<*>
@@ -80,7 +80,7 @@ class MyAdapter(private var myDataset: List<MultiLevelItem>, var contentItemAdap
     private fun setupRv(holder: MyViewHolder, i: Int) {
 
         viewManager = LinearLayoutManager(holder.itemView.context)
-        viewAdapter = MyAdapter(myDataset[i].items!!, contentItemAdapter)
+        viewAdapter = MainAdapter(myDataset[i].items!!, contentItemAdapter)
 
         recyclerView = holder.itemView.findViewById<RecyclerView>(R.id.rv_items).apply {
             // use this setting to improve performance if you know that changes
