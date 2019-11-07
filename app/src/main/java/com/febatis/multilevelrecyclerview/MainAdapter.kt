@@ -31,7 +31,7 @@ class MainAdapter(private var myDataset: List<MultiLevelItem>, var contentItemAd
 
     // Object Functions
 
-    private fun slideDown(holder: MyViewHolder) {
+    private fun slideDown(holder: MyViewHolder, animated: Boolean) {
 
         val anim = ValueAnimator.ofInt(0, holder.itemMeasuredHeight)
         anim.addUpdateListener { valueAnimator ->
@@ -41,11 +41,11 @@ class MainAdapter(private var myDataset: List<MultiLevelItem>, var contentItemAd
             holder.llItems!!.layoutParams = layoutParams
         }
 
-        anim.duration = 300
+        anim.duration = (if (animated) 300 else 0)
         anim.start()
     }
 
-    private fun slideUp(holder: MyViewHolder) {
+    private fun slideUp(holder: MyViewHolder, animated: Boolean) {
 
         val anim = ValueAnimator.ofInt(holder.itemMeasuredHeight, 0)
         anim.addUpdateListener { valueAnimator ->
@@ -54,25 +54,27 @@ class MainAdapter(private var myDataset: List<MultiLevelItem>, var contentItemAd
             layoutParams.height = `val`
             holder.llItems!!.layoutParams = layoutParams
         }
-        anim.duration = 300
+        anim.duration = (if (animated) 300 else 0)
         anim.start()
     }
 
-    private fun toggleContents(holder: MyViewHolder) {
+    private fun toggleContents(holder: MyViewHolder, animated: Boolean) {
 
         if (holder.itemMeasuredHeight == 0 ) {
             holder.itemMeasuredHeight = holder.llItems!!.measuredHeight
         }
 
-        holder.ivExpandIcon!!.animate()
+        val anim = holder.ivExpandIcon!!.animate()
             .rotation((if (holder.isOpen) -180 else 0).toFloat())
-            .start()
+
+        anim.duration = (if (animated) 300 else 0)
+        anim.start()
 
         if (holder.isOpen) {
-            slideUp(holder)
+            slideUp(holder, animated)
             holder.isOpen = false
         } else {
-            slideDown(holder)
+            slideDown(holder, animated)
             holder.isOpen = true
         }
     }
@@ -103,7 +105,7 @@ class MainAdapter(private var myDataset: List<MultiLevelItem>, var contentItemAd
             if (holder.llItems!!.measuredHeight != 0) {
                 holder.itemMeasuredHeight = holder.llItems!!.measuredHeight
 
-                toggleContents(holder)
+                toggleContents(holder, false)
 
 
                 if (holder.llItems!!.viewTreeObserver.isAlive) {
@@ -159,7 +161,7 @@ class MainAdapter(private var myDataset: List<MultiLevelItem>, var contentItemAd
 
             setupRv(holder, position)
             holder.llHeader!!.setOnClickListener {
-                toggleContents(holder)
+                toggleContents(holder, true)
                 myDataset[position].isOpen = holder.isOpen
             }
 
